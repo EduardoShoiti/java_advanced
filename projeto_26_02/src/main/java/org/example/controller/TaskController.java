@@ -1,0 +1,44 @@
+package org.example.controller;
+
+import org.example.model.Task;
+import org.example.controller.dto.TaskDTO;
+import org.example.service.TaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/tasks")
+public class TaskController {
+
+    private final TaskService taskService;
+
+    @Autowired
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    @PostMapping("/criar-tarefa")
+    public ResponseEntity<Task> createTask(@ResponseBody TaskDTO taskDTO) {
+        Task task = taskService.createTask(taskDTO);
+        return ResponseEntity.ok(task);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Task>> getAllTasks() {
+        return ResponseEntity.ok(taskService.listTasks());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+        Task task = taskService.getClass(id);
+        if (task != null) {
+            return ResponseEntity.ok(task);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+}
